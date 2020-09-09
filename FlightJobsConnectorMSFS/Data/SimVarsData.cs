@@ -23,6 +23,13 @@ namespace FlightJobsConnectorMSFS.Data
             public double total_weight;
             public double empty_weight;
             public double fuel_total_quantity_weight;
+            public double sea_level_pressure { get; set; }
+            public double ambient_wind_direction { get; set; }
+            public double ambient_wind_velocity { get; set; }
+            public double ambient_temperature { get; set; }
+            public double ambient_visibility { get; set; }
+            public double brake_parking_position { get; set; }
+            public double eng_combustion { get; set; }
         };
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = 1)]
@@ -52,50 +59,80 @@ namespace FlightJobsConnectorMSFS.Data
 
             simVarModelList.Add(new SimVarModel()
             {
-                DefineId = SimVarsEnum.TITLE,
-                RequestId = SimVarsEnum.TITLE,
                 DataName = SimVarsEnum.TITLE.ToDescriptionString(),
                 UnitysName = null // Set NULL for Strings
             });
 
             simVarModelList.Add(new SimVarModel()
             {
-                DefineId = SimVarsEnum.PLANE_LATITUDE,
-                RequestId = SimVarsEnum.PLANE_LATITUDE,
                 DataName = SimVarsEnum.PLANE_LATITUDE.ToDescriptionString(),
                 UnitysName = "degree"
             });
 
             simVarModelList.Add(new SimVarModel()
             {
-                DefineId = SimVarsEnum.PLANE_LONGITUDE,
-                RequestId = SimVarsEnum.PLANE_LONGITUDE,
                 DataName = SimVarsEnum.PLANE_LONGITUDE.ToDescriptionString(),
                 UnitysName = "degree"
             });
 
             simVarModelList.Add(new SimVarModel()
             {
-                DefineId = SimVarsEnum.TOTAL_WEIGHT,
-                RequestId = SimVarsEnum.TOTAL_WEIGHT,
                 DataName = SimVarsEnum.TOTAL_WEIGHT.ToDescriptionString(),
                 UnitysName = weightUnit
             });
 
             simVarModelList.Add(new SimVarModel()
             {
-                DefineId = SimVarsEnum.EMPTY_WEIGHT,
-                RequestId = SimVarsEnum.EMPTY_WEIGHT,
                 DataName = SimVarsEnum.EMPTY_WEIGHT.ToDescriptionString(),
                 UnitysName = weightUnit
             });
 
             simVarModelList.Add(new SimVarModel()
             {
-                DefineId = SimVarsEnum.FUEL_TOTAL_QUANTITY_WEIGHT,
-                RequestId = SimVarsEnum.FUEL_TOTAL_QUANTITY_WEIGHT,
                 DataName = SimVarsEnum.FUEL_TOTAL_QUANTITY_WEIGHT.ToDescriptionString(),
                 UnitysName = weightUnit
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.SEA_LEVEL_PRESSURE.ToDescriptionString(),
+                UnitysName = "millibars"
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.AMBIENT_WIND_DIRECTION.ToDescriptionString(),
+                UnitysName = "degrees"
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.AMBIENT_WIND_VELOCITY.ToDescriptionString(),
+                UnitysName = "knots"
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.AMBIENT_TEMPERATURE.ToDescriptionString(),
+                UnitysName = "celsius"
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.AMBIENT_VISIBILITY.ToDescriptionString(),
+                UnitysName = "meters"
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.BRAKE_PARKING_POSITION.ToDescriptionString(),
+                UnitysName = "number"
+            });
+
+            simVarModelList.Add(new SimVarModel()
+            {
+                DataName = SimVarsEnum.ENG_COMBUSTION.ToDescriptionString(),
+                UnitysName = "number"
             });
 
             return simVarModelList;

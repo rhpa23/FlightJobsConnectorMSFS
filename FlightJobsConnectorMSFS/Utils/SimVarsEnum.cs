@@ -21,7 +21,23 @@ namespace FlightJobsConnectorMSFS.Utils
         EMPTY_WEIGHT,
         [Description("FUEL TOTAL QUANTITY WEIGHT")]
         FUEL_TOTAL_QUANTITY_WEIGHT,
-        [Description("TOTAL PAYLOAD")]
+        [Description("SEA LEVEL PRESSURE")]
+        SEA_LEVEL_PRESSURE,
+        [Description("AMBIENT WIND DIRECTION")]
+        AMBIENT_WIND_DIRECTION,
+        [Description("AMBIENT WIND VELOCITY")]
+        AMBIENT_WIND_VELOCITY,
+        [Description("AMBIENT TEMPERATURE")]
+        AMBIENT_TEMPERATURE,
+        [Description("AMBIENT VISIBILITY")]
+        AMBIENT_VISIBILITY,
+        [Description("BRAKE PARKING POSITION")]
+        BRAKE_PARKING_POSITION,
+        [Description("ENG COMBUSTION:1")]
+        ENG_COMBUSTION,
+
+
         TOTAL_PAYLOAD,
+        WEATHER_INFO,
     }
 }

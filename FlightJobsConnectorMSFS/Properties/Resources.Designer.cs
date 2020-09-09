@@ -59,5 +59,22 @@ namespace FlightJobsConnectorMSFS.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a X,1712,09NOV06DEC/17,1711,12OCT08NOV/17
+        ///A,01ID,LAVA HOT SPRINGS,42.608250,-112.032461,5268,18000,18000,2800,0
+        ///A,01NK,GRANVILLE,43.425000,-73.261944,421,18000,18000,2500,0
+        ///A,01TX,OX RANCH,29.461478,-100.114294,1293,18000,18000,5800,0
+        ///A,01WI,PREHN CRANBERRY COMP,44.010000,-90.389167,930,18000,18000,2600,0
+        ///A,02WA,CAWLEYS SOUTH PRAIRI,47.152325,-122.094003,690,18000,18000,2600,0
+        ///A,04WN,STILLWATER CREEK,46.958358,-119.638819,1510,18000,18000,4100,0
+        ///A,06FA,GWINN,26.908153,-80.328414,28,18000,18000,7000,0
+        /// [o restante da cadeia de caracteres foi truncado]&quot;;.
+        /// </summary>
+        internal static string GlobalAirportDatabase {
+            get {
+                return ResourceManager.GetString("GlobalAirportDatabase", resourceCulture);
+            }
+        }
     }
 }

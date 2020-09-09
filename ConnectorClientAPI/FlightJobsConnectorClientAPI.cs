@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace ConnectorClientAPI
 {
@@ -101,6 +103,37 @@ namespace ConnectorClientAPI
             {
                 ResultMessage = response.Content.ReadAsStringAsync().Result
             };
+        }
+
+        public async Task<IList<JobModel>> GetUserJobs(string userId)
+        {
+            var url = $"{_siteUrl}api/JobApi/GetUserJobs";
+            client.DefaultRequestHeaders.Clear();
+
+            client.DefaultRequestHeaders.Add("UserId", userId);
+
+            HttpResponseMessage response = await client.GetAsync(new Uri(url));
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(response.Content.ReadAsStringAsync().Result, new Exception($"Error status code: {response.StatusCode}"));
+            }
+
+            string json = response.Content.ReadAsStringAsync().Result;
+            var jobs = JsonConvert.DeserializeObject<IList<JobModel>>(json.Replace("\"[", "[").Replace("]\"", "]").Replace("\\", ""));
+
+            return jobs;
+        }
+
+        public async Task<bool> ActivateUserJob(string userId, int jobId)
+        {
+            var url = $"{_siteUrl}api/JobApi/ActivateUserJob";
+            client.DefaultRequestHeaders.Clear();
+
+            client.DefaultRequestHeaders.Add("UserId", userId);
+            client.DefaultRequestHeaders.Add("JobId", jobId.ToString());
+
+            HttpResponseMessage response = await client.GetAsync(new Uri(url));
+            return response.IsSuccessStatusCode;
         }
     }
 }

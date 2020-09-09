@@ -10,8 +10,6 @@ namespace FlightJobsConnectorMSFS.Models
 {
     public class SimVarModel
     {
-        public SimVarsEnum DefineId { get; set; }
-        public SimVarsEnum RequestId { get; set; }
         public string DataName { get; set; }
         public string UnitysName { get; set; }
 

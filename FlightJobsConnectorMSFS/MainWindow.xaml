@@ -3,35 +3,129 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="683.2" MinHeight="450" MinWidth="683" Loaded="Window_Loaded">
-    <Grid>
-        <Label Name="lblLatitude" Content="0" HorizontalAlignment="Left" Margin="100,74,0,0" VerticalAlignment="Top"/>
-        <Label Name="lblLongitude" Content="0" HorizontalAlignment="Left" Margin="100,100,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblTotalPayload" Content="0" HorizontalAlignment="Left" Margin="100,125,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblTitle" Content="0" HorizontalAlignment="Left" Margin="100,157,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="lblFuelWeight" Content="0" HorizontalAlignment="Left" Margin="100,185,0,0" VerticalAlignment="Top"/>
+        Title="[FlightJobs] Connector for MSFS" Height="488" Width="695" MinHeight="480" MinWidth="695" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" Topmost="False" ResizeMode="CanMinimize">
+    <Grid Margin="0,0,0,0">
+        <Rectangle Fill="Black" Height="69" Margin="0,0,-0.2,0" Stroke="Black" VerticalAlignment="Top"/>
+        <Image Height="72" Margin="17,6,0,0" VerticalAlignment="Top" Source="img/FlightJobsLogo0004.png" HorizontalAlignment="Left" Width="70"/>
+        <Image Height="44" VerticalAlignment="Top" Source="img/msf-logo.png" Margin="0,10,9.8,0" HorizontalAlignment="Right" Width="208"/>
+        <TextBlock Margin="581,60,10.4,356.8" Height="14">
+            <Hyperlink NavigateUri="https://www.flight-jobs.net" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Text="flight-jobs.net" />
+            </Hyperlink>
+        </TextBlock>
+        <TextBlock Margin="470,60,110.4,360.8" Height="14">
+            <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=44VG35XYRJUCW&amp;source=url" RequestNavigate="Hyperlink_RequestNavigate">
+                <TextBlock Text="Paypal donation" />
+            </Hyperlink>
+        </TextBlock>
+        <TabControl Height="370" Margin="2,77,2,0" VerticalAlignment="Top">
+            <TabItem Header="Home">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name="btnStart" Margin="0,0,145.8,104" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" Click="btnStart_Click" IsEnabled="False">
+                        <StackPanel Orientation="Horizontal" Width="79">
+                            <Image x:Name="imgStart" gif:ImageBehavior.AnimatedSource="img/start-ball.gif" Width="25" Height="25" Visibility="Hidden" />
+                            <TextBlock Text="Start" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btnFinish" Margin="0,0,6.2,104.6" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" IsEnabled="False" Click="btnFinish_Click" RenderTransformOrigin="0.706,0.419">
+                        <StackPanel Orientation="Horizontal" Width="79">
+                            <Image x:Name="imgFinish" gif:ImageBehavior.AnimatedSource="img/atention-cursor.gif" Width="25" Height="25" Visibility="Hidden" />
+                            <TextBlock Text="Finish" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="btnReset" Content="Reset" Margin="0,0,349.2,104.6" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" Click="btnReset_Click"/>
+                    <Button x:Name="btnLogin" Content="Login" Margin="0,12,6.2,0" VerticalAlignment="Top" Click="btnLogin_Click" Height="50" HorizontalAlignment="Right" Width="75"/>
 
-        <Label Content="Latitude:" HorizontalAlignment="Left" Margin="12,74,0,0" VerticalAlignment="Top"/>
-        <Label Content="Longitude:" HorizontalAlignment="Left" Margin="12,100,0,0" VerticalAlignment="Top"/>
-        <Label Content="Payload:" HorizontalAlignment="Left" Margin="12,127,0,0" VerticalAlignment="Top"/>
-        <Label Content="Title:" HorizontalAlignment="Left" Margin="12,156,0,0" VerticalAlignment="Top"/>
-        <Label Content="Fuel Weight:" HorizontalAlignment="Left" Margin="12,186,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btnStart" Content="Start" Margin="0,0,145.8,104" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" Click="btnStart_Click" IsEnabled="False"/>
-        <Button x:Name="btnFinish" Content="Finish" Margin="0,0,9.8,104" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" IsEnabled="False" Click="btnFinish_Click"/>
-        <Button x:Name="btnLogin" Content="Login" Margin="0,49,12.8,0" VerticalAlignment="Top" Click="btnLogin_Click" Height="50" HorizontalAlignment="Right" Width="75"/>
-        <ListView x:Name="lvwMessages" Height="89" Margin="10,0,9.8,10" VerticalAlignment="Bottom">
-            <Label Content="Wellcome FlightJobs" Padding="0,0,0,0" ></Label>
-        </ListView>
-        <Label Content="Email" HorizontalAlignment="Left" Margin="254,47,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txbEmail" Height="23" Margin="317,48,111.8,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
-        <Label Content="Password" HorizontalAlignment="Left" Margin="254,76,0,0" VerticalAlignment="Top" Width="60"/>
-        <PasswordBox x:Name="txbPassword" Margin="317,76,111.8,0" VerticalAlignment="Top" Height="23"/>
+                    <ListView x:Name="lvwMessages" Height="89" Margin="10,0,6,9.6" VerticalAlignment="Bottom">
+                        <Label Content="Wellcome FlightJobs" Padding="0,0,0,0" ></Label>
+                    </ListView>
+                    <Label Content="Email" HorizontalAlignment="Left" Margin="229,9,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="txbEmail" Height="23" Margin="289,10,111.6,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+                    <Label Content="Password" HorizontalAlignment="Left" Margin="229,38,0,0" VerticalAlignment="Top" Width="60"/>
+                    <PasswordBox x:Name="txbPassword" Margin="289,38,111.6,0" VerticalAlignment="Top" Height="23"/>
 
-        <StackPanel x:Name="pnlLoginRequired" HorizontalAlignment="Left" Height="50" Margin="522,49,0,0" VerticalAlignment="Top" Width="9" Visibility="Hidden">
-            <Label Content="*" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="18" Foreground="Red" Padding="0" />
-            <Label Content="*" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="18" Foreground="Red" Padding="0"/>
-        </StackPanel>
+                    <StackPanel x:Name="pnlLoginRequired" HorizontalAlignment="Left" Height="50" Margin="522,49,0,0" VerticalAlignment="Top" Width="9" Visibility="Hidden">
+                        <Label Content="*" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="18" Foreground="Red" Padding="0" />
+                        <Label Content="*" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="18" Foreground="Red" Padding="0"/>
+                    </StackPanel>
+                    <DataGrid x:Name="jobListDataGrid" HorizontalAlignment="Left" CanUserAddRows="False"  AutoGenerateColumns="False" Height="122" Margin="234,75,0,0" VerticalAlignment="Top" Width="431" Cursor="Hand" GridLinesVisibility="Horizontal" SelectionMode="Single" HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding DepartureICAO}" Header="Departure"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding ArrivalICAO}" Header="Arrival"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Dist}" Header="Distance(nm)"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Pax}" Header="Passengers"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Cargo}" Header="Cargo"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding PayloadDisplay}" Header="Payload"/>
+                            <DataGridCheckBoxColumn IsReadOnly="True" Binding="{Binding IsActivated}" Header="Activated"/>
+                        </DataGrid.Columns>
+                        <DataGrid.ItemContainerStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="MouseUp" Handler="Row_Click"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31A4CF"/>
+                                        <Setter Property="Foreground" Value="White" />
+                                        <Setter Property="FontWeight" Value="ExtraBold" />
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                    </Trigger>
 
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#FF27222A" />
+                                        <Setter Property="Foreground" Value="#FF31A4CF" />
+                                        <Setter Property="FontWeight" Value="ExtraBold" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.ItemContainerStyle>
+                    </DataGrid>
+                    <GroupBox Header="Weather" HorizontalAlignment="Left" Height="135" Margin="10,102,0,0" VerticalAlignment="Top" Width="214">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Pressure:" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblPressure" Content="0" HorizontalAlignment="Left" Margin="24,5,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Wind:" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblWind" Content="0" HorizontalAlignment="Left" Margin="40,25,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Temperature:" HorizontalAlignment="Left" Margin="0,45,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblTemperature" Content="0" HorizontalAlignment="Left" Margin="1,45,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Visibility:" HorizontalAlignment="Left" Margin="0,65,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblVisibility" Content="0" HorizontalAlignment="Left" Margin="24,65,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Header="Airplane" HorizontalAlignment="Left" Height="92" Margin="10,7,0,0" VerticalAlignment="Top" Width="214">
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Payload:" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblTotalPayload" Content="0" HorizontalAlignment="Left" Margin="21,5,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Plane:" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblTitle" Content="0" HorizontalAlignment="Left" Margin="34,24,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Content="Fuel Weight:" HorizontalAlignment="Left" Margin="0,44,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblFuelWeight" Content="0" HorizontalAlignment="Left" Margin="0,45,0,0" VerticalAlignment="Top"/>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Settings">
+                <Grid Background="#FFE5E5E5">
+                    <Button x:Name="btnSaveSettings" Content="Save" HorizontalAlignment="Left" Margin="555,286,0,0" VerticalAlignment="Top" Width="87" Height="32" Click="btnSaveSettings_Click"/>
+                    <GroupBox Header="Popup connector window when finish" HorizontalAlignment="Left" Height="51" Margin="10,10,0,0" VerticalAlignment="Top" Width="256">
+                        <CheckBox x:Name="ckbPopupParkingBrake" Content="Parking brake set" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    </GroupBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>

@@ -22,5 +22,22 @@
             <Setter Property="VerticalAlignment" Value= "Top" />
             <Setter Property="Foreground" Value="DarkGreen" />
         </Style>
+        <Style x:Key="LinkButton"  TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock TextDecorations="Underline"><ContentPresenter /></TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Foreground" Value="Blue" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Foreground" Value="Red" />
+                    <Setter Property="Cursor" Value="Hand"/>
+                    
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>

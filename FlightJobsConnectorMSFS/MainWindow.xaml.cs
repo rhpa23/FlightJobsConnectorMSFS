@@ -4,10 +4,13 @@ using FlightJobsConnectorMSFS.Extensions;
 using FlightJobsConnectorMSFS.Models;
 using FlightJobsConnectorMSFS.Utils;
 using Microsoft.FlightSimulator.SimConnect;
+using Squirrel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
@@ -37,7 +40,7 @@ namespace FlightJobsConnectorMSFS
     };
 
     /// <summary>
-    /// Interação lógica para MainWindow.xam
+    /// Interação lógica para MainWindow.xam        Squirrel --releasify FlightJobsPackage.0.1.0.nupkg
     /// </summary>
     public partial class MainWindow : Window
     {
@@ -66,9 +69,31 @@ namespace FlightJobsConnectorMSFS
 
         private StartJobResponseModel _startJobResponseInfo;
 
+        private IList<JobModel> _jobs;
+
+        private bool _finishPopUpShown;
+        private bool _startPopUpShown;
+
         public MainWindow()
         {
             InitializeComponent();
+            CheckForUpdates();
+            AddVersionNumber();
+        }
+
+        private void AddVersionNumber()
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+            this.Title += $" v.{fileVersionInfo.FileVersion}";
+        }
+
+        private async Task CheckForUpdates()
+        {
+            using (var manager = new UpdateManager(@"C:\Temp\FlightJobsReleases"))
+            {
+                await manager.UpdateApp();
+            }
         }
 
         private void Connect()
@@ -93,6 +118,7 @@ namespace FlightJobsConnectorMSFS
                     m_oSimConnect.OnRecvSimobjectDataBytype += new SimConnect.RecvSimobjectDataBytypeEventHandler(SimConnect_OnRecvSimobjectDataBytype);
                     ReceiveSimConnectMessage();
                     _isConnected = true;
+                    AddLogMessage("Connected to KH", LogMessageTypeEnum.Success);
                 }
             }
             catch (COMException ex)
@@ -113,6 +139,7 @@ namespace FlightJobsConnectorMSFS
                 m_oSimConnect.Dispose();
                 m_oSimConnect = null;
             }
+            _isConnected = false;
         }
 
         public void ReceiveSimConnectMessage()
@@ -146,6 +173,9 @@ namespace FlightJobsConnectorMSFS
                 // if you skip this step, you will only receive a uint in the .dwData field.
                 m_oSimConnect.RegisterDataDefineStruct<SimVarsStruct>(SimVarsEnum.TITLE);
                 m_oSimConnect.RegisterDataDefineStruct<SimVarsPayloadStruct>(SimVarsEnum.TOTAL_PAYLOAD);
+
+                //m_oSimConnect.WeatherRequestObservationAtStation(SimVarsEnum.WEATHER_INFO, "LOWW");
+                //m_oSimConnect.WeatherRequestObservationAtNearestStation(SimVarsEnum.WEATHER_INFO, 48.117680599757485f, 16.566300032290759f);
             }
         }
 
@@ -178,6 +208,11 @@ namespace FlightJobsConnectorMSFS
             Console.WriteLine("KH has exited");
 
             Disconnect();
+
+            if (_startJobResponseInfo != null)
+            {
+                Reset();
+            }
         }
 
         private void SimConnect_OnRecvException(SimConnect sender, SIMCONNECT_RECV_EXCEPTION data)
@@ -203,14 +238,20 @@ namespace FlightJobsConnectorMSFS
                         Latitude = simVarStruct.latitude,
                         Longitude = simVarStruct.longitude,
                         FuelWeightPounds = Math.Round(simVarStruct.fuel_total_quantity_weight, 0),
-                        PayloadPounds = 0,//Math.Round(simVarStruct.total_weight - simVarStruct.empty_weight - simVarStruct.fuel_total_quantity_weight, 0),
-                        UserId = string.IsNullOrEmpty(_userId) ? _userId : ""
+                        UserId = string.IsNullOrEmpty(_userId) ? _userId : "",
+                        Pressure = Math.Round(simVarStruct.sea_level_pressure, 0),
+                        WindDirection = Math.Round(simVarStruct.ambient_wind_direction,0),
+                        WindVelocity = Math.Round(simVarStruct.ambient_wind_velocity,0),
+                        Temperature = Math.Round(simVarStruct.ambient_temperature,0),
+                        Visibility = Math.Round(simVarStruct.ambient_visibility, 0),
+                        ParkingBrakeOn = Convert.ToBoolean(simVarStruct.brake_parking_position),
+                        EngOneRunning = Convert.ToBoolean(simVarStruct.eng_combustion)
                     };
                 }
                 else if (data.dwData[0] is SimVarsPayloadStruct)
                 {
                     SimVarsPayloadStruct simVarsPayloadStruct = (SimVarsPayloadStruct)data.dwData[0];
-                    _simVarsModel.PayloadPounds =
+                    _simVarsModel.PayloadPounds = Math.Round(
                         simVarsPayloadStruct.payload_station_weight_1 +
                         simVarsPayloadStruct.payload_station_weight_2 +
                         simVarsPayloadStruct.payload_station_weight_3 +
@@ -225,17 +266,95 @@ namespace FlightJobsConnectorMSFS
                         simVarsPayloadStruct.payload_station_weight_12 +
                         simVarsPayloadStruct.payload_station_weight_13 +
                         simVarsPayloadStruct.payload_station_weight_14 +
-                        simVarsPayloadStruct.payload_station_weight_15;
+                        simVarsPayloadStruct.payload_station_weight_15, 0);
                 }
 
                 _simVarsModel.PayloadKilograms = Math.Round(_simVarsModel.PayloadPounds * 0.453592, 0);
                 _simVarsModel.FuelWeightKilograms = Math.Round(_simVarsModel.FuelWeightPounds * 0.453592, 0);
 
-                lblLatitude.Content = $"{_simVarsModel.Latitude}";
-                lblLongitude.Content = $"{_simVarsModel.Longitude}";
+                //lblLatitude.Content = $"{_simVarsModel.Latitude}";
+                //lblLongitude.Content = $"{_simVarsModel.Longitude}";
                 lblTitle.Content = _simVarsModel.Title;
-                lblFuelWeight.Content = $"{_simVarsModel.FuelWeightPounds}Lb / {_simVarsModel.FuelWeightKilograms}Kg";
-                lblTotalPayload.Content = $"{_simVarsModel.PayloadPounds}Lb / {_simVarsModel.PayloadKilograms}Kg";
+                lblFuelWeight.Content = $"{_simVarsModel.FuelWeightPounds} Lb / {_simVarsModel.FuelWeightKilograms} Kg";
+                lblTotalPayload.Content = $"{_simVarsModel.PayloadPounds} Lb / {_simVarsModel.PayloadKilograms} Kg";
+                lblPressure.Content = $"{(_simVarsModel.Pressure * 0.02953).ToString("0.00")} inHg / {_simVarsModel.Pressure} mbar";
+                lblWind.Content = $"{_simVarsModel.WindDirection}º with {_simVarsModel.WindVelocity} Kts";
+                lblTemperature.Content = $"{_simVarsModel.Temperature}º";
+                lblVisibility.Content = $"{_simVarsModel.Visibility} meters";
+            }
+        }
+
+        private void Reset()
+        {
+            txbEmail.IsEnabled = txbPassword.IsEnabled = btnLogin.IsEnabled = true;
+            btnStart.IsEnabled = false;
+            btnFinish.IsEnabled = false;
+            lvwMessages.Items.Clear();
+
+            //lblLatitude.Content = "0";
+            //lblLongitude.Content = "0";
+            lblTotalPayload.Content = "0";
+            lblTitle.Content = "0";
+            lblFuelWeight.Content = "0";
+            lblPressure.Content = "0";
+            lblWind.Content = "0";
+            lblTemperature.Content = "0";
+            lblVisibility.Content = "0";
+            jobListDataGrid.IsEnabled = true;
+            jobListDataGrid.ItemsSource = null;
+            _startJobResponseInfo = null;
+            _finishPopUpShown = false;
+            _startPopUpShown = false;
+            imgStart.Visibility = Visibility.Hidden;
+            imgFinish.Visibility = Visibility.Hidden;
+            Disconnect();
+        }
+
+        private void LoadSettingsData()
+        {
+            try
+            {
+                //var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + 
+                //    "\\FlightJobsConnectorMSFS\\ResourceData";
+                //var filePath = System.IO.Path.Combine(path, "Settings.ini");
+                //if (!Directory.Exists(path))
+                //{
+                //    Directory.CreateDirectory(path);
+                //}
+                //if (!File.Exists(filePath))
+                //{
+                //    string createText = $"1|0|0";
+                //    File.WriteAllText(path, createText);
+                //}
+                var path = System.AppDomain.CurrentDomain.BaseDirectory;
+                var lines = File.ReadLines(System.IO.Path.Combine(path, "ResourceData\\Settings.ini"));
+                var line = lines?.FirstOrDefault();
+                var info = line?.Split('|');
+                if (info?.Length > 0)
+                {
+                    ckbPopupParkingBrake.IsChecked = info[0] == "1";
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage("[Error] Cannot load the login data.", LogMessageTypeEnum.Error);
+            }
+        }
+
+        private void SaveSettings()
+        {
+            try
+            {
+                var path = System.AppDomain.CurrentDomain.BaseDirectory;
+                path = System.IO.Path.Combine(path, "ResourceData\\Settings.ini");
+                string ckbPopupParkingBrakeValue = ckbPopupParkingBrake.IsChecked.Value ? "1" : "0";
+                string createText = $"{ckbPopupParkingBrakeValue}|0|0";
+                File.WriteAllText(path, createText);
+                AddLogMessage($"Settings saved", LogMessageTypeEnum.Success);
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"[Error] {ex.Message}", LogMessageTypeEnum.Error);
             }
         }
 
@@ -243,7 +362,8 @@ namespace FlightJobsConnectorMSFS
         {
             try
             {
-                var lines = File.ReadLines("ResourceData/LoginSavedData.ini");
+                var path = System.AppDomain.CurrentDomain.BaseDirectory;
+                var lines = File.ReadLines(System.IO.Path.Combine(path, "ResourceData\\LoginSavedData.ini"));
                 var line = lines?.FirstOrDefault();
                 var info = line?.Split('|');
                 if (info?.Length == 2)
@@ -252,9 +372,9 @@ namespace FlightJobsConnectorMSFS
                     txbPassword.Password = info[1];
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                AddLogMessage("[Error] Cannot load the login data.", LogMessageTypeEnum.Error);
+                AddLogMessage($"[Error] Cann1ot load the login data.", LogMessageTypeEnum.Error);
             }
         }
 
@@ -262,13 +382,30 @@ namespace FlightJobsConnectorMSFS
         {
             try
             {
-                string path = "ResourceData/LoginSavedData.ini";
+                var path = System.AppDomain.CurrentDomain.BaseDirectory;
+                path = System.IO.Path.Combine(path, "ResourceData/LoginSavedData.ini");
                 string createText = $"{txbEmail.Text}|{txbPassword.Password}";
                 File.WriteAllText(path, createText);
             }
             catch (Exception)
             {
                 AddLogMessage("[Error] Cannot save the login data.", LogMessageTypeEnum.Error);
+            }
+        }
+
+        private async Task LoadJobListDataGrid()
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(_userId))
+                {
+                    _jobs = await _flightJobsConnectorClientAPI.GetUserJobs(_userId);
+                    jobListDataGrid.ItemsSource = _jobs;
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"[Error] {ex.Message}", LogMessageTypeEnum.Error);
             }
         }
 
@@ -300,16 +437,47 @@ namespace FlightJobsConnectorMSFS
             m_simVarModelList = SimVarsData.CreateSimVarList("pounds");
             Connect();
             RegisterSimVars();
-            
 
             _oTimer.Interval = new TimeSpan(0, 0, 0, 1, 0);
             _oTimer.Tick += new EventHandler(OnTick);
             _oTimer.Start();
+
         }
 
         private void OnTick(object sender, EventArgs e)
         {
             RefreshSimVars();
+            CheckWindowPopup();
+        }
+
+        private void CheckWindowPopup()
+        {
+            if (_simVarsModel != null && ckbPopupParkingBrake.IsChecked.Value)
+            {
+                if (_startJobResponseInfo == null)
+                {
+                    if (!_startPopUpShown && !_simVarsModel.ParkingBrakeOn)
+                    {
+                        Application.Current.MainWindow.WindowState = WindowState.Normal;
+                        _startPopUpShown = true;
+                    }
+                }
+                else
+                {
+                    if (!_finishPopUpShown)
+                    {
+                        bool isCloseToArrivel = AirportDatabaseFile.CheckClosestLocation(_simVarsModel.Latitude, _simVarsModel.Longitude,
+                                                                                     _startJobResponseInfo.ArrivalLAT, _startJobResponseInfo.ArrivalLON);
+                        if (isCloseToArrivel && _simVarsModel.ParkingBrakeOn)
+                        {
+                            Application.Current.MainWindow.WindowState = WindowState.Normal;
+                            _finishPopUpShown = true;
+                            imgStart.Visibility = Visibility.Hidden;
+                            imgFinish.Visibility = Visibility.Visible;
+                        }
+                    }
+                }
+            }
         }
 
         private void RefreshSimVars()
@@ -321,50 +489,73 @@ namespace FlightJobsConnectorMSFS
                     Connect();
                 }
 
-                m_simVarModelList = SimVarsData.CreateSimVarList("pounds");
                 m_oSimConnect?.ClearDataDefinition(SimVarsEnum.TITLE);
                 m_oSimConnect?.ClearDataDefinition(SimVarsEnum.TOTAL_PAYLOAD);
                 RegisterSimVars();
 
                 RequestDataOnSim();
-                Thread.Sleep(500);
                 ReceiveSimConnectMessage();
             }
             catch
             {
-                AddLogMessage($"Simconnect erro", LogMessageTypeEnum.Error);
+                AddLogMessage($"Simconnect fail", LogMessageTypeEnum.Error);
                 Disconnect();
             }
         }
 
-        private void ckbUseKilograms_Checked(object sender, RoutedEventArgs e)
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            // TODO: Save setup
+            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+            e.Handled = true;
         }
 
         private async void btnStart_Click(object sender, RoutedEventArgs e)
         {
-            RefreshSimVars();
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            btnStart.IsEnabled = false;
+            btnFinish.IsEnabled = false;
+            LoadConnect();
             Thread.Sleep(500);
             try
             {
                 if (_simVarsModel != null)
                 {
+                    
                     _simVarsModel.UserId = _userId;
                     _startJobResponseInfo = await _flightJobsConnectorClientAPI.StartJob(_simVarsModel);
+                    var arrivalInfo = AirportDatabaseFile.FindAirportInfo(_startJobResponseInfo.ArrivalICAO);
+                    _startJobResponseInfo.ArrivalLAT = arrivalInfo.Latitude;
+                    _startJobResponseInfo.ArrivalLON = arrivalInfo.Longitude;
                     AddLogMessage(_startJobResponseInfo.ResultMessage, LogMessageTypeEnum.Success);
-                    btnStart.IsEnabled = false;
                     btnFinish.IsEnabled = true;
+                    jobListDataGrid.IsEnabled = false;
+                    imgStart.Visibility = Visibility.Visible;
+                    imgFinish.Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    btnStart.IsEnabled = true;
+                    btnFinish.IsEnabled = false;
                 }
             }
             catch (Exception ex)
             {
+                btnStart.IsEnabled = true;
+                btnFinish.IsEnabled = false;
                 AddLogMessage(ex.Message, LogMessageTypeEnum.Warnning);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
             }
         }
 
         private async void btnFinish_Click(object sender, RoutedEventArgs e)
         {
+            Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+            btnStart.IsEnabled = false;
+            btnFinish.IsEnabled = false;
+
             RefreshSimVars();
             Thread.Sleep(500);
             try
@@ -374,13 +565,24 @@ namespace FlightJobsConnectorMSFS
                     _simVarsModel.UserId = _userId;
                     _startJobResponseInfo = await _flightJobsConnectorClientAPI.FinishJob(_simVarsModel);
                     AddLogMessage(_startJobResponseInfo.ResultMessage, LogMessageTypeEnum.Success);
+                    await LoadJobListDataGrid();
+                    imgStart.Visibility = Visibility.Hidden;
+                    imgFinish.Visibility = Visibility.Hidden;
+                }
+                else
+                {
                     btnStart.IsEnabled = false;
-                    btnFinish.IsEnabled = false;
+                    btnFinish.IsEnabled = true;
                 }
             }
             catch (Exception ex)
             {
+                btnFinish.IsEnabled = true;
                 AddLogMessage(ex.Message, LogMessageTypeEnum.Warnning);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
             }
         }
 
@@ -388,6 +590,7 @@ namespace FlightJobsConnectorMSFS
         {
             try
             {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 if (string.IsNullOrEmpty(txbEmail.Text.Trim()) || !Validations.IsValidEmail(txbEmail.Text))
                 {
                     txbEmail.Focus();
@@ -412,6 +615,7 @@ namespace FlightJobsConnectorMSFS
                     btnStart.IsEnabled = true;
                     LoadConnect();
                     SaveLoginData();
+                    await LoadJobListDataGrid();
                 }
                 else
                 {
@@ -424,13 +628,67 @@ namespace FlightJobsConnectorMSFS
                 txbEmail.IsEnabled = txbPassword.IsEnabled = btnLogin.IsEnabled = true;
                 AddLogMessage($"[Error] {ex.Message}", LogMessageTypeEnum.Error);
             }
+            finally
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+            }
+        }
+
+        private void btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string msg = "Do you really want to reset the connector?";
+                if (MessageBox.Show(msg, "Reset?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    Reset();
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"[Error] {ex.Message}", LogMessageTypeEnum.Error);
+            }
+
+        }
+
+        private async void Row_Click(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                jobListDataGrid.IsEnabled = false;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
+                var selected = (JobModel)((System.Windows.FrameworkElement)sender).DataContext;
+                if (!selected.IsActivated)
+                {
+                    var result = await _flightJobsConnectorClientAPI.ActivateUserJob(_userId, selected.Id);
+                    if (result)
+                    {
+                        AddLogMessage($"The current activeted job is from {selected.DepartureICAO} to {selected.ArrivalICAO}", LogMessageTypeEnum.Success);
+                        await LoadJobListDataGrid();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLogMessage($"[Error] {ex.Message}", LogMessageTypeEnum.Error);
+            }
+            finally
+            {
+                jobListDataGrid.IsEnabled = true;
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            m_simVarModelList = SimVarsData.CreateSimVarList("pounds");
             LoadLoginData();
+            LoadSettingsData();
         }
 
-        
+        private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SaveSettings();
+        }
     }
 }
