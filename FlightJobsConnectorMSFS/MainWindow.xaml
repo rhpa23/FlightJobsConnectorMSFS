@@ -121,8 +121,15 @@
             <TabItem Header="Settings">
                 <Grid Background="#FFE5E5E5">
                     <Button x:Name="btnSaveSettings" Content="Save" HorizontalAlignment="Left" Margin="555,286,0,0" VerticalAlignment="Top" Width="87" Height="32" Click="btnSaveSettings_Click"/>
+                    <Button x:Name="btnUpdadeApp" Content="Update App" HorizontalAlignment="Left" Margin="25,286,0,0" VerticalAlignment="Top" Width="87" Height="32" Click="btnUpdadeApp_Click"/>
                     <GroupBox Header="Popup connector window when finish" HorizontalAlignment="Left" Height="51" Margin="10,10,0,0" VerticalAlignment="Top" Width="256">
                         <CheckBox x:Name="ckbPopupParkingBrake" Content="Parking brake set" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    </GroupBox>
+                    <GroupBox Header="Config" HorizontalAlignment="Left" Height="122" Margin="10,66,0,0" VerticalAlignment="Top" Width="256">
+                        <Grid>
+                            <CheckBox x:Name="ckbAutoUpdate" Content="Auto update this app" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="ckbOnTop" Content="Allways on top" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
+                        </Grid>
                     </GroupBox>
                 </Grid>
             </TabItem>

@@ -77,7 +77,6 @@ namespace FlightJobsConnectorMSFS
         public MainWindow()
         {
             InitializeComponent();
-            CheckForUpdates();
             AddVersionNumber();
         }
 
@@ -90,9 +89,22 @@ namespace FlightJobsConnectorMSFS
 
         private async Task CheckForUpdates()
         {
-            using (var manager = new UpdateManager(@"C:\Temp\FlightJobsReleases"))
+            try
             {
-                await manager.UpdateApp();
+                using (var manager = await UpdateManager.GitHubUpdateManager(@"https://github.com/rhpa23/FlightJobsConnectorMSFS"))
+                {
+                    var updateInfo = await manager.CheckForUpdate();
+
+                    if (updateInfo.ReleasesToApply.Any())
+                    {
+                        await manager.UpdateApp();
+                        AddLogMessage($"This app was updated. The new version will take effect when App is restarted.", LogMessageTypeEnum.Success);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                AddLogMessage($"Update app failed.", LogMessageTypeEnum.Error);
             }
         }
 
@@ -314,25 +326,15 @@ namespace FlightJobsConnectorMSFS
         {
             try
             {
-                //var path = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + 
-                //    "\\FlightJobsConnectorMSFS\\ResourceData";
-                //var filePath = System.IO.Path.Combine(path, "Settings.ini");
-                //if (!Directory.Exists(path))
-                //{
-                //    Directory.CreateDirectory(path);
-                //}
-                //if (!File.Exists(filePath))
-                //{
-                //    string createText = $"1|0|0";
-                //    File.WriteAllText(path, createText);
-                //}
                 var path = System.AppDomain.CurrentDomain.BaseDirectory;
                 var lines = File.ReadLines(System.IO.Path.Combine(path, "ResourceData\\Settings.ini"));
                 var line = lines?.FirstOrDefault();
                 var info = line?.Split('|');
-                if (info?.Length > 0)
+                if (info?.Length > 2)
                 {
                     ckbPopupParkingBrake.IsChecked = info[0] == "1";
+                    ckbAutoUpdate.IsChecked = info[1] == "1";
+                    ckbOnTop.IsChecked = info[2] == "1";
                 }
             }
             catch (Exception ex)
@@ -345,16 +347,25 @@ namespace FlightJobsConnectorMSFS
         {
             try
             {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Wait;
                 var path = System.AppDomain.CurrentDomain.BaseDirectory;
                 path = System.IO.Path.Combine(path, "ResourceData\\Settings.ini");
                 string ckbPopupParkingBrakeValue = ckbPopupParkingBrake.IsChecked.Value ? "1" : "0";
-                string createText = $"{ckbPopupParkingBrakeValue}|0|0";
+                string ckbAutoUpdateValue = ckbAutoUpdate.IsChecked.Value ? "1" : "0";
+                string ckbOnTopValue = ckbOnTop.IsChecked.Value ? "1" : "0";
+                string createText = $"{ckbPopupParkingBrakeValue}|{ckbAutoUpdateValue}|{ckbOnTopValue}";
                 File.WriteAllText(path, createText);
                 AddLogMessage($"Settings saved", LogMessageTypeEnum.Success);
+                MessageBox.Show("Settings saved", "Settings", MessageBoxButton.OK, MessageBoxImage.Information);
+                this.Topmost = ckbOnTop.IsChecked.Value;
             }
             catch (Exception ex)
             {
                 AddLogMessage($"[Error] {ex.Message}", LogMessageTypeEnum.Error);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = System.Windows.Input.Cursors.Arrow;
             }
         }
 
@@ -684,11 +695,22 @@ namespace FlightJobsConnectorMSFS
             m_simVarModelList = SimVarsData.CreateSimVarList("pounds");
             LoadLoginData();
             LoadSettingsData();
+            if (ckbAutoUpdate.IsChecked.Value)
+            {
+                CheckForUpdates();
+            }
+
+            this.Topmost = ckbOnTop.IsChecked.Value;
         }
 
         private void btnSaveSettings_Click(object sender, RoutedEventArgs e)
         {
             SaveSettings();
+        }
+
+        private async void btnUpdadeApp_Click(object sender, RoutedEventArgs e)
+        {
+            await CheckForUpdates();
         }
     }
 }
