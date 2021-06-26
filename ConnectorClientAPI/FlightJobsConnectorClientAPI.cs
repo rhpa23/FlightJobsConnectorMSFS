@@ -41,10 +41,12 @@ namespace ConnectorClientAPI
                 if (response.IsSuccessStatusCode)
                 {
                     var activeJobInfo = response.Headers.GetValues("active_job_info");
+                    var username = response.Headers.FirstOrDefault(x => x.Key == "username").Value;
                     return new LoginResponseModel()
                     {
                         ActiveJobInfo = activeJobInfo != null ? activeJobInfo.First() : "",
-                        UserId = response.Content.ReadAsStringAsync().Result
+                        UserId = response.Content.ReadAsStringAsync().Result,
+                        UserName = username != null ? username.First() : "<no user name>"
                     };
                 }
                 

@@ -125,7 +125,7 @@ namespace FlightJobsConnectorMSFS.Data
 
             simVarModelList.Add(new SimVarModel()
             {
-                DataName = SimVarsEnum.BRAKE_PARKING_POSITION.ToDescriptionString(),
+                DataName = SimVarsEnum.BRAKE_INDICATOR.ToDescriptionString(),
                 UnitysName = "number"
             });
 

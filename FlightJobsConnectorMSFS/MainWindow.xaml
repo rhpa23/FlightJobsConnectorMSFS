@@ -5,98 +5,83 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
+        WindowStyle="None"
         Title="[FlightJobs] Connector for MSFS" Height="488" Width="695" MinHeight="480" MinWidth="695" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" Topmost="False" ResizeMode="CanMinimize">
-    <Grid Margin="0,0,0,0">
+    <Grid Margin="0,0,0,0" Background="Black">
+        <DockPanel x:Name="TitleBar" Panel.ZIndex="9999"  DockPanel.Dock="Top" VerticalAlignment="Top" Cursor="ScrollAll" Width="600" Height="30" HorizontalAlignment="Right">
+            <Image Source="/img/close.png" DockPanel.Dock="Right" MouseLeftButtonUp="Close_MouseLeftButtonUp" Cursor="Hand" />
+            <Image Source="/img/minimize.png" DockPanel.Dock="Right" MouseLeftButtonUp="Min_MouseLeftButtonUp" Cursor="Hand" Height="33" />
+            <Border Background="Transparent" MouseDown="TitleBar_MouseDown" DockPanel.Dock="Right"></Border>
+        </DockPanel>
+
         <Rectangle Fill="Black" Height="69" Margin="0,0,-0.2,0" Stroke="Black" VerticalAlignment="Top"/>
-        <Image Height="72" Margin="17,6,0,0" VerticalAlignment="Top" Source="img/FlightJobsLogo0004.png" HorizontalAlignment="Left" Width="70"/>
-        <Image Height="44" VerticalAlignment="Top" Source="img/msf-logo.png" Margin="0,10,9.8,0" HorizontalAlignment="Right" Width="208"/>
-        <TextBlock Margin="581,60,10.4,356.8" Height="14">
-            <Hyperlink NavigateUri="https://www.flight-jobs.net" RequestNavigate="Hyperlink_RequestNavigate">
-                <TextBlock Text="flight-jobs.net" />
-            </Hyperlink>
+        <Border Margin="0 65 0 0" BorderBrush="Gray" BorderThickness="0 0 0 1" VerticalAlignment="Top"></Border>
+
+        <TextBlock>
+        <Hyperlink NavigateUri="https://www.flight-jobs.net" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand" Foreground="#FF31A4CF">
+            <Image Height="72" Margin="17,6,0,0" VerticalAlignment="Top" Source="img/FlightJobsLogo0004.png" HorizontalAlignment="Left" Width="70"/>
+        </Hyperlink>
         </TextBlock>
-        <TextBlock Margin="470,60,110.4,360.8" Height="14">
-            <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=44VG35XYRJUCW&amp;source=url" RequestNavigate="Hyperlink_RequestNavigate">
+        <Label Content="connector for"  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5 45 245 5" FontSize="10"/>
+        <Label Content="Microsoft Flight Simulator"  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5 38 55 5" FontSize="16"/>
+        <Label Content="- v0.0.0" x:Name="lblVersion"  VerticalAlignment="Top" HorizontalAlignment="Right" Margin="5 38 0 5" FontSize="16"/>
+
+        <TextBlock Margin="110,49,485,380">
+            <Hyperlink Foreground="#FF31A4CF" Cursor="Hand" NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=44VG35XYRJUCW&amp;source=url" RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="Paypal donation" />
             </Hyperlink>
         </TextBlock>
-        <TabControl Height="370" Margin="2,77,2,0" VerticalAlignment="Top">
+        <TabControl Height="411" Margin="2,77,2.2,0" VerticalAlignment="Top" Background="Black">
             <TabItem Header="Home">
-                <Grid Background="#FFE5E5E5">
-                    <Button x:Name="btnStart" Margin="0,0,145.8,104" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" Click="btnStart_Click" IsEnabled="False">
-                        <StackPanel Orientation="Horizontal" Width="79">
-                            <Image x:Name="imgStart" gif:ImageBehavior.AnimatedSource="img/start-ball.gif" Width="25" Height="25" Visibility="Hidden" />
-                            <TextBlock Text="Start" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="btnFinish" Margin="0,0,6.2,104.6" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" IsEnabled="False" Click="btnFinish_Click" RenderTransformOrigin="0.706,0.419">
-                        <StackPanel Orientation="Horizontal" Width="79">
-                            <Image x:Name="imgFinish" gif:ImageBehavior.AnimatedSource="img/atention-cursor.gif" Width="25" Height="25" Visibility="Hidden" />
-                            <TextBlock Text="Finish" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Button x:Name="btnReset" Content="Reset" Margin="0,0,349.2,104.6" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Bottom" Click="btnReset_Click"/>
+                <Grid Background="Black">
+                    <Image Width="430" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 70 5 5"  Source="/img/shot2020.11.png" />
+                    <StackPanel VerticalAlignment="Bottom" Margin="230,0,10.2,98.6" Height="49" Orientation="Horizontal">
+                        <Border BorderBrush="Gray" BorderThickness="0 0 0 1"></Border>
+                        <Button x:Name="btnReset" Content="Reset" Margin="15,5,115,0" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Top" Click="btnReset_Click"/>
+                        <Button x:Name="btnStart" Margin="0,5,40,0" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Top" Click="btnStart_Click" IsEnabled="False">
+                            <StackPanel Orientation="Horizontal" Width="79">
+                                <Image x:Name="imgStart" gif:ImageBehavior.AnimatedSource="img/start-ball.gif" Width="25" Height="25" Visibility="Hidden" />
+                                <TextBlock Text="Start" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button x:Name="btnFinish" Margin="0,5,0,0" HorizontalAlignment="Right" Width="87" Height="32" VerticalAlignment="Top" IsEnabled="False" Click="btnFinish_Click">
+                            <StackPanel Orientation="Horizontal" Width="79">
+                                <Image x:Name="imgFinish" gif:ImageBehavior.AnimatedSource="img/atention-cursor.gif" Width="25" Height="25" Visibility="Hidden" />
+                                <TextBlock Text="Finish" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
                     <Button x:Name="btnLogin" Content="Login" Margin="0,12,6.2,0" VerticalAlignment="Top" Click="btnLogin_Click" Height="50" HorizontalAlignment="Right" Width="75"/>
 
                     <ListView x:Name="lvwMessages" Height="89" Margin="10,0,6,9.6" VerticalAlignment="Bottom">
                         <Label Content="Wellcome FlightJobs" Padding="0,0,0,0" ></Label>
                     </ListView>
                     <Label Content="Email" HorizontalAlignment="Left" Margin="229,9,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="txbEmail" Height="23" Margin="289,10,111.6,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
-                    <Label Content="Password" HorizontalAlignment="Left" Margin="229,38,0,0" VerticalAlignment="Top" Width="60"/>
-                    <PasswordBox x:Name="txbPassword" Margin="289,38,111.6,0" VerticalAlignment="Top" Height="23"/>
+                    <TextBox x:Name="txbEmail" Height="20" Margin="300,8,111.6,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top"/>
+                    <Label Content="Password" HorizontalAlignment="Left" Margin="229,38,0,0" VerticalAlignment="Top" Width="66"/>
+                    <PasswordBox x:Name="txbPassword" Margin="300,38,111.2,0" VerticalAlignment="Top" Height="24"/>
 
-                    <StackPanel x:Name="pnlLoginRequired" HorizontalAlignment="Left" Height="50" Margin="522,49,0,0" VerticalAlignment="Top" Width="9" Visibility="Hidden">
+                    <StackPanel x:Name="pnlLoginRequired" HorizontalAlignment="Left" Height="50" Margin="572,15,0,0" VerticalAlignment="Top" Width="9" Visibility="Hidden">
                         <Label Content="*" HorizontalAlignment="Left" Margin="0,0,0,0" VerticalAlignment="Top" Height="18" Foreground="Red" Padding="0" />
                         <Label Content="*" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="18" Foreground="Red" Padding="0"/>
                     </StackPanel>
-                    <DataGrid x:Name="jobListDataGrid" HorizontalAlignment="Left" CanUserAddRows="False"  AutoGenerateColumns="False" Height="122" Margin="234,75,0,0" VerticalAlignment="Top" Width="431" Cursor="Hand" GridLinesVisibility="Horizontal" SelectionMode="Single" HeadersVisibility="Column">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding DepartureICAO}" Header="Departure"/>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding ArrivalICAO}" Header="Arrival"/>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Dist}" Header="Distance(nm)"/>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Pax}" Header="Passengers"/>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Cargo}" Header="Cargo"/>
-                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding PayloadDisplay}" Header="Payload"/>
-                            <DataGridCheckBoxColumn IsReadOnly="True" Binding="{Binding IsActivated}" Header="Activated"/>
-                        </DataGrid.Columns>
-                        <DataGrid.ItemContainerStyle>
-                            <Style TargetType="DataGridRow">
-                                <EventSetter Event="MouseUp" Handler="Row_Click"/>
-                                <Style.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter Property="Background" Value="#FF31A4CF"/>
-                                        <Setter Property="Foreground" Value="White" />
-                                        <Setter Property="FontWeight" Value="ExtraBold" />
-                                        <Setter Property="Cursor" Value="Hand"/>
-                                    </Trigger>
-
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter Property="Background" Value="#FF27222A" />
-                                        <Setter Property="Foreground" Value="#FF31A4CF" />
-                                        <Setter Property="FontWeight" Value="ExtraBold" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </DataGrid.ItemContainerStyle>
-                    </DataGrid>
                     <GroupBox Header="Weather" HorizontalAlignment="Left" Height="135" Margin="10,102,0,0" VerticalAlignment="Top" Width="214">
                         <Grid>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Pressure:" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top"/>
-                                <Label x:Name="lblPressure" Content="0" HorizontalAlignment="Left" Margin="24,5,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblPressure" Content="0" HorizontalAlignment="Left" Margin="4,5,0,0" VerticalAlignment="Top"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Wind:" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top"/>
-                                <Label x:Name="lblWind" Content="0" HorizontalAlignment="Left" Margin="40,25,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblWind" Content="0" HorizontalAlignment="Left" Margin="23,25,0,0" VerticalAlignment="Top"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <Label Content="Temperature:" HorizontalAlignment="Left" Margin="0,45,0,0" VerticalAlignment="Top"/>
-                                <Label x:Name="lblTemperature" Content="0" HorizontalAlignment="Left" Margin="1,45,0,0" VerticalAlignment="Top"/>
+                                <Label Content="Temp:" HorizontalAlignment="Left" Margin="0,45,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblTemperature" Content="0" HorizontalAlignment="Left" Margin="21,45,0,0" VerticalAlignment="Top"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Visibility:" HorizontalAlignment="Left" Margin="0,65,0,0" VerticalAlignment="Top"/>
-                                <Label x:Name="lblVisibility" Content="0" HorizontalAlignment="Left" Margin="24,65,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblVisibility" Content="0" HorizontalAlignment="Left" Margin="3,65,0,0" VerticalAlignment="Top"/>
                             </StackPanel>
                         </Grid>
                     </GroupBox>
@@ -104,11 +89,11 @@
                         <Grid>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Payload:" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top"/>
-                                <Label x:Name="lblTotalPayload" Content="0" HorizontalAlignment="Left" Margin="21,5,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblTotalPayload" Content="0" HorizontalAlignment="Left" Margin="2,5,0,0" VerticalAlignment="Top" Foreground="#FFFFEE00"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Plane:" HorizontalAlignment="Left" Margin="0,25,0,0" VerticalAlignment="Top"/>
-                                <Label x:Name="lblTitle" Content="0" HorizontalAlignment="Left" Margin="34,24,0,0" VerticalAlignment="Top"/>
+                                <Label x:Name="lblTitle" Content="0" HorizontalAlignment="Left" Margin="15,24,0,0" VerticalAlignment="Top"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal">
                                 <Label Content="Fuel Weight:" HorizontalAlignment="Left" Margin="0,44,0,0" VerticalAlignment="Top"/>
@@ -116,21 +101,106 @@
                             </StackPanel>
                         </Grid>
                     </GroupBox>
+                    <StackPanel HorizontalAlignment="Left" Margin="234,73,0,0" VerticalAlignment="Top" Width="431" >
+                        <Label Name="lblUserInfo" Content="Login with your FlightJobs account" HorizontalAlignment="Left" Height="29" VerticalAlignment="Top" Width="431" HorizontalContentAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel x:Name="pnlCurrentJob" HorizontalAlignment="Left" Margin="234,115,0,0" VerticalAlignment="Top" Width="431" >
+                        <TextBlock Name="lblCurrentJobInfo" TextWrapping="WrapWithOverflow" HorizontalAlignment="Left" VerticalAlignment="Top" Width="431" Foreground="White" FontSize="14" TextAlignment="Center" Padding="2 2 5 5">There is no active Job for you. Active some Job to start.</TextBlock>
+                        <Label Name="lblCurrentJobPayloadInfo" Content="" HorizontalAlignment="Left" Height="35" VerticalAlignment="Top" Width="431" HorizontalContentAlignment="Center" Foreground="Orange" FontSize="16"/>
+                    </StackPanel>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Pending Jobs">
+                <Grid Background="Black">
+                    <DataGrid CellStyle="{StaticResource Body_Content_DataGrid_Centering}" ColumnHeaderStyle="{StaticResource HeaderStyle}" Background="Black" x:Name="jobListDataGrid" HorizontalAlignment="Left" CanUserAddRows="False"  AutoGenerateColumns="False" Height="315" Margin="10,15,0,0" VerticalAlignment="Top" Width="651" Cursor="Hand" GridLinesVisibility="Horizontal" SelectionMode="Single" HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn ElementStyle="{StaticResource CheckBoxStyle}" IsReadOnly="True" Binding="{Binding IsActivated}" Header=""/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding DepartureDesc}" Header="Departure"/>
+                            <DataGridTemplateColumn Header="" Width="SizeToCells" IsReadOnly="True">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Image Source="/img/atention-cursor.gif" Width="25px" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding ArrivalDesc}" Header="Arrival"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding PayloadDisplay}" Header="Payload"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding AlternativeICAO}" Header="Alternative"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Dist}" Header="Distance(nm)"/>
+                            <!--<DataGridTextColumn IsReadOnly="True" Binding="{Binding Pax}" Header="Passengers"/>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding Cargo}" Header="Cargo"/>-->
+                        </DataGrid.Columns>
+                        <DataGrid.ItemContainerStyle>
+                            <Style TargetType="DataGridRow">
+                                <EventSetter Event="MouseUp" Handler="Row_Click"/>
+                                <Setter Property="Background" Value="Black" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="BorderBrush" Value="White" />
+                                <Setter Property="BorderThickness" Value="0.8" />
+                                <Setter Property="FontSize" Value="14" />
+                                <Setter Property="Padding" Value="5" />
+
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#FF31A4CF"/>
+                                        <Setter Property="Foreground" Value="White" />
+                                        <Setter Property="Cursor" Value="Hand"/>
+                                    </Trigger>
+
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#FF27222A" />
+                                        <Setter Property="Foreground" Value="#FF31A4CF" />
+                                        <Setter Property="FontWeight" Value="Bold" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.ItemContainerStyle>
+                    </DataGrid>
                 </Grid>
             </TabItem>
             <TabItem Header="Settings">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="Black">
                     <Button x:Name="btnSaveSettings" Content="Save" HorizontalAlignment="Left" Margin="555,286,0,0" VerticalAlignment="Top" Width="87" Height="32" Click="btnSaveSettings_Click"/>
-                    <Button x:Name="btnUpdadeApp" Content="Update App" HorizontalAlignment="Left" Margin="25,286,0,0" VerticalAlignment="Top" Width="87" Height="32" Click="btnUpdadeApp_Click"/>
-                    <GroupBox Header="Popup connector window when finish" HorizontalAlignment="Left" Height="51" Margin="10,10,0,0" VerticalAlignment="Top" Width="256">
-                        <CheckBox x:Name="ckbPopupParkingBrake" Content="Parking brake set" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btnUpdadeApp" Content="Update App" HorizontalAlignment="Left" Margin="25,286,0,0" VerticalAlignment="Top" Width="119" Height="32" Click="btnUpdadeApp_Click"/>
+                    <GroupBox Header="Auto start/finish/popup" HorizontalAlignment="Left" Height="131" Margin="10,10,0,0" VerticalAlignment="Top" Width="405">
+                        <Grid>
+                            <RadioButton x:Name="rbtParkingBrake" Content="Parking brake" HorizontalAlignment="Left" Margin="14,10,0,0" VerticalAlignment="Top"/>
+                            <RadioButton x:Name="rbtEngines" Content="Engine 1" HorizontalAlignment="Left" Margin="180,10,0,0" VerticalAlignment="Top"/>
+                            <RadioButton x:Name="rbtDisable" Content="Disable" HorizontalAlignment="Left" Margin="300,10,0,0" VerticalAlignment="Top" Checked="rbtDisable_Checked" Unchecked="rbtDisable_Checked"/>
+                            
+                            <CheckBox x:Name="ckbPopup" Content="Popup window when finish" HorizontalAlignment="Left" Margin="10,44,0,0" VerticalAlignment="Top"/>
+                            <CheckBox x:Name="ckbAutoFinish" Content="Auto finish" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
+                        </Grid>
                     </GroupBox>
-                    <GroupBox Header="Config" HorizontalAlignment="Left" Height="122" Margin="10,66,0,0" VerticalAlignment="Top" Width="256">
+                    <GroupBox Header="Config" HorizontalAlignment="Left" Height="111" Margin="10,146,0,0" VerticalAlignment="Top" Width="298">
                         <Grid>
                             <CheckBox x:Name="ckbAutoUpdate" Content="Auto update this app" HorizontalAlignment="Left" Margin="10,20,0,0" VerticalAlignment="Top"/>
                             <CheckBox x:Name="ckbOnTop" Content="Allways on top" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top"/>
                         </Grid>
                     </GroupBox>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Map">
+                <Grid Background="Black">
+                    <Label Content="Under construction" HorizontalAlignment="Left" Margin="250,73,0,0" VerticalAlignment="Top"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="About">
+                <Grid Background="Black">
+                    <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="330">
+                        <TextBlock VerticalAlignment="Top" Width="629" Foreground="White" FontSize="14" HorizontalAlignment="Left" Margin="22,29,0,0" TextWrapping="Wrap" Text="This application was made for personal and shared use freely for MS Flight Simulator and X-Plane community, with the objective to improve the simulation experience from the point of view of the Pilots. The intention of FlightJobs is to simulate the pilot's work, earning money and experience to be hired by an airline company. Base on that, this tool was constructed and can be improved with the community suggestions. For more information, videos and tutorials access FlightJobs portal on the link below:"/>
+                        <TextBlock Style="{StaticResource mouse_cursor_hand}" Margin="22,49,533.6,270.6" VerticalAlignment="Top">
+                            <Hyperlink NavigateUri="https://www.flight-jobs.net" RequestNavigate="Hyperlink_RequestNavigate" Cursor="Hand" Foreground="#FF31A4CF">
+                                <TextBlock Text="flight-jobs.net" FontSize="20" />
+                            </Hyperlink>
+                        </TextBlock>
+                        <TextBlock Style="{StaticResource mouse_cursor_hand}" Margin="22,-244,0,80" VerticalAlignment="Top" HorizontalAlignment="Left" Height="17" Width="101">
+                            <Hyperlink Foreground="#FF31A4CF" Cursor="Hand" NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=44VG35XYRJUCW&amp;source=url" RequestNavigate="Hyperlink_RequestNavigate">
+                                <TextBlock Text="Paypal donation" />
+                            </Hyperlink>
+                        </TextBlock>
+                    </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>

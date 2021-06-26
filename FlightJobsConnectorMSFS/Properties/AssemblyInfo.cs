@@ -51,5 +51,6 @@ using System.Windows;
 // É possível especificar todos os valores ou usar como padrão os Números de Build e da Revisão
 // usando o "*" como mostrado abaixo:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.1.7")]
-[assembly: AssemblyFileVersion("0.1.7")]
+[assembly: AssemblyVersion("0.2.3")]
+[assembly: AssemblyFileVersion("0.2.3")]
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]

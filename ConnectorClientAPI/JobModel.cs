@@ -9,6 +9,8 @@ namespace ConnectorClientAPI
         public int Id { get; set; }
         public string DepartureICAO { get; set; }
         public string ArrivalICAO { get; set; }
+        public string DepartureDesc { get; set; }
+        public string ArrivalDesc { get; set; }
         public string AlternativeICAO { get; set; }
         public long Dist { get; set; }
         public long Pax { get; set; }

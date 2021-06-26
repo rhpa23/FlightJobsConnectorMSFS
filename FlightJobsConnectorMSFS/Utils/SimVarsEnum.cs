@@ -31,8 +31,8 @@ namespace FlightJobsConnectorMSFS.Utils
         AMBIENT_TEMPERATURE,
         [Description("AMBIENT VISIBILITY")]
         AMBIENT_VISIBILITY,
-        [Description("BRAKE PARKING POSITION")]
-        BRAKE_PARKING_POSITION,
+        [Description("BRAKE INDICATOR")]
+        BRAKE_INDICATOR,
         [Description("ENG COMBUSTION:1")]
         ENG_COMBUSTION,
 

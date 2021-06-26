@@ -4,40 +4,81 @@
              xmlns:local="clr-namespace:FlightJobsConnectorMSFS"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <Style x:Key="LabelErrorControl" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Padding" Value="0,0,0,0" />
-            <Setter Property="VerticalAlignment" Value= "Top" />
-            <Setter Property="Foreground" Value="#FFE75959" />
-        </Style>
-        <Style x:Key="LabelWarningControl" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Padding" Value="0,0,0,0" />
-            <Setter Property="VerticalAlignment" Value= "Top" />
-            <Setter Property="Foreground" Value="DarkOrange" />
-        </Style>
-        <Style x:Key="LabelSuccessControl" TargetType="{x:Type Label}">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="Padding" Value="0,0,0,0" />
-            <Setter Property="VerticalAlignment" Value= "Top" />
-            <Setter Property="Foreground" Value="DarkGreen" />
-        </Style>
-        <Style x:Key="LinkButton"  TargetType="Button">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <TextBlock TextDecorations="Underline"><ContentPresenter /></TextBlock>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Foreground" Value="Blue" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                    <Setter Property="Foreground" Value="Red" />
-                    <Setter Property="Cursor" Value="Hand"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Core.Implicit.xaml" />
+                <ResourceDictionary Source="Themes/MetroDark/MetroDark.MSControls.Toolkit.Implicit.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        
+            <Style x:Key="LabelErrorControl" TargetType="{x:Type Label}">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Padding" Value="0,0,0,0" />
+                <Setter Property="VerticalAlignment" Value= "Top" />
+                <Setter Property="Foreground" Value="#FFE75959" />
+            </Style>
+            <Style x:Key="LabelWarningControl" TargetType="{x:Type Label}">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Padding" Value="0,0,0,0" />
+                <Setter Property="VerticalAlignment" Value= "Top" />
+                <Setter Property="Foreground" Value="DarkOrange" />
+            </Style>
+            <Style x:Key="LabelSuccessControl" TargetType="{x:Type Label}">
+                <Setter Property="HorizontalAlignment" Value="Left" />
+                <Setter Property="Padding" Value="0,0,0,0" />
+                <Setter Property="VerticalAlignment" Value= "Top" />
+                <Setter Property="Foreground" Value="DarkGreen" />
+            </Style>
+            <Style x:Key="LinkButton"  TargetType="Button">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <TextBlock TextDecorations="Underline"><ContentPresenter /></TextBlock>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground" Value="Blue" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="true">
+                        <Setter Property="Foreground" Value="Red" />
+                        <Setter Property="Cursor" Value="Hand"/>
                     
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <Style x:Key="HeaderStyle" TargetType="DataGridColumnHeader">
+                <Setter Property="Background" Value="Black" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderBrush" Value="White" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="5" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="HorizontalContentAlignment" Value="Left" />
+                <Setter Property="MinWidth" Value="0" />
+                <Setter Property="MinHeight" Value="30" />
+                <Setter Property="Cursor" Value="Hand" />
+            </Style>
+            <Style x:Key="Body_Content_DataGrid_Centering" TargetType="{x:Type DataGridCell}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                            <Grid Background="{TemplateBinding Background}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="mouse_cursor_hand" TargetType="TextBlock">
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Cursor" Value="Hand"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
